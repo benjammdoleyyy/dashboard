@@ -1,0 +1,14 @@
+{
+  "name": "qaso-dashboard",
+  "version": "1.0.0",
+  "description": "Sistema de gestión de inventario QASO",
+  "main": "index.html",
+  "scripts": {
+    "dev": "vercel dev",
+    "build": "echo 'No build process needed for static site'",
+    "start": "vercel dev"
+  },
+  "keywords": ["dashboard", "inventory", "management"],
+  "author": "benjammdoleyyy",
+  "license": "MIT"
+}
