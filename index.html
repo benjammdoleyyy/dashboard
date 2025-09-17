@@ -1,0 +1,716 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <base target="_top">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body { 
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+      background: #E8F4F8;
+      height: 100vh;
+      overflow: hidden;
+    }
+    
+    .app-container {
+      display: flex;
+      height: 100vh;
+    }
+    
+    .sidebar {
+      width: 250px;
+      background: #2E86AB;
+      color: white;
+      flex-shrink: 0;
+      overflow-y: auto;
+      box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+    }
+    
+    .sidebar-header {
+      padding: 20px;
+      background: #1C5F7B;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+    }
+    
+    .sidebar-header h1 {
+      font-size: 1.2rem;
+      font-weight: 600;
+      text-align: center;
+    }
+    
+    .nav-menu {
+      list-style: none;
+      padding: 20px 0;
+    }
+    
+    .nav-item {
+      margin: 5px 15px;
+    }
+    
+    .nav-link {
+      display: flex;
+      align-items: center;
+      padding: 12px 15px;
+      color: rgba(255,255,255,0.8);
+      text-decoration: none;
+      border-radius: 8px;
+      transition: all 0.3s ease;
+      cursor: pointer;
+      font-size: 0.9rem;
+    }
+    
+    .nav-link:hover {
+      background: rgba(255,255,255,0.15);
+      color: white;
+      transform: translateX(5px);
+    }
+    
+    .nav-link.active {
+      background: #5DADE2;
+      color: white;
+      font-weight: 600;
+    }
+    
+    .nav-icon {
+      margin-right: 10px;
+      font-size: 1.1rem;
+      width: 20px;
+      text-align: center;
+    }
+    
+    .main-content {
+      flex: 1;
+      overflow-y: auto;
+      background: #FAFBFC;
+    }
+    
+    .content-header {
+      background: white;
+      padding: 20px 30px;
+      border-bottom: 1px solid #e9ecef;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    }
+    
+    .content-header h2 {
+      color: #2E86AB;
+      font-size: 1.5rem;
+      font-weight: 600;
+    }
+    
+    .content-body {
+      padding: 30px;
+    }
+    
+    .tab-content {
+      display: none;
+      animation: fadeIn 0.3s ease;
+    }
+    
+    .tab-content.active {
+      display: block;
+    }
+    
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    
+    .card {
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.06);
+      margin-bottom: 25px;
+      overflow: hidden;
+      border: 1px solid #E5F2F7;
+    }
+    
+    .card-header {
+      padding: 20px;
+      background: #F0F8FC;
+      border-bottom: 1px solid #E5F2F7;
+      font-weight: 600;
+      color: #2E86AB;
+    }
+    
+    .card-body {
+      padding: 25px;
+    }
+    
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 20px;
+      margin-bottom: 20px;
+    }
+    
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      position: relative;
+    }
+    
+    .form-group label {
+      margin-bottom: 8px;
+      font-weight: 600;
+      color: #2E86AB;
+      font-size: 0.9rem;
+    }
+    
+    input, select, textarea {
+      padding: 12px;
+      border: 2px solid #E5F2F7;
+      border-radius: 8px;
+      font-size: 0.9rem;
+      transition: all 0.3s ease;
+      background: white;
+    }
+    
+    input:focus, select:focus, textarea:focus {
+      outline: none;
+      border-color: #5DADE2;
+      box-shadow: 0 0 0 3px rgba(93, 173, 226, 0.1);
+    }
+    
+    .autocomplete-container {
+      position: relative;
+    }
+    
+    .autocomplete-dropdown {
+      position: absolute;
+      top: 100%;
+      left: 0;
+      right: 0;
+      background: white;
+      border: 2px solid #5DADE2;
+      border-top: none;
+      border-radius: 0 0 8px 8px;
+      max-height: 200px;
+      overflow-y: auto;
+      z-index: 1000;
+      display: none;
+    }
+    
+    .autocomplete-item {
+      padding: 12px;
+      cursor: pointer;
+      border-bottom: 1px solid #E5F2F7;
+      transition: background 0.2s ease;
+    }
+    
+    .autocomplete-item:hover {
+      background: #F0F8FC;
+    }
+    
+    .autocomplete-item:last-child {
+      border-bottom: none;
+    }
+    
+    .autocomplete-code {
+      font-weight: 600;
+      color: #2E86AB;
+    }
+    
+    .autocomplete-name {
+      color: #6c757d;
+      font-size: 0.85rem;
+      margin-top: 2px;
+    }
+    
+    .btn {
+      padding: 12px 20px;
+      border: none;
+      border-radius: 8px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+    
+    .btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    }
+    
+    .btn-primary {
+      background: #5DADE2;
+      color: white;
+    }
+    
+    .btn-success {
+      background: #28a745;
+      color: white;
+    }
+    
+    .btn-danger {
+      background: #dc3545;
+      color: white;
+    }
+    
+    .btn-warning {
+      background: #ffc107;
+      color: #212529;
+    }
+    
+    .btn-secondary {
+      background: #6c757d;
+      color: white;
+    }
+    
+    .btn-info {
+      background: #17a2b8;
+      color: white;
+    }
+    
+    .table-container {
+      overflow-x: auto;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+      border: 1px solid #E5F2F7;
+    }
+    
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: white;
+    }
+    
+    th, td {
+      padding: 12px 15px;
+      text-align: left;
+      border-bottom: 1px solid #E5F2F7;
+    }
+    
+    th {
+      background: #F0F8FC;
+      font-weight: 600;
+      color: #2E86AB;
+      font-size: 0.9rem;
+    }
+    
+    tr:hover {
+      background: #F8FBFD;
+    }
+    
+    .status-normal { background: #d4edda; color: #155724; }
+    .status-low { background: #fff3cd; color: #856404; }
+    .status-zero { background: #f8d7da; color: #721c24; }
+    
+    .text-success { color: #28a745; font-weight: 600; }
+    .text-danger { color: #dc3545; font-weight: 600; }
+    .text-warning { color: #ffc107; font-weight: 600; }
+    .text-info { color: #17a2b8; font-weight: 600; }
+    
+    .message {
+      padding: 12px 15px;
+      border-radius: 8px;
+      margin: 15px 0;
+      font-weight: 500;
+    }
+    
+    .message.success {
+      background: #d4edda;
+      color: #155724;
+      border: 1px solid #c3e6cb;
+    }
+    
+    .message.error {
+      background: #f8d7da;
+      color: #721c24;
+      border: 1px solid #f5c6cb;
+    }
+    
+    .message.warning {
+      background: #fff3cd;
+      color: #856404;
+      border: 1px solid #ffeaa7;
+    }
+    
+    .message.info {
+      background: #d1ecf1;
+      color: #0c5460;
+      border: 1px solid #bee5eb;
+    }
+    
+    .loading {
+      display: none;
+      text-align: center;
+      padding: 20px;
+      color: #5DADE2;
+      font-style: italic;
+    }
+    
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 20px;
+      margin-bottom: 30px;
+    }
+    
+    .stat-card {
+      background: white;
+      padding: 25px;
+      border-radius: 12px;
+      text-align: center;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.06);
+      border-left: 4px solid #5DADE2;
+      border: 1px solid #E5F2F7;
+    }
+    
+    .stat-value {
+      font-size: 2rem;
+      font-weight: 700;
+      color: #2E86AB;
+      margin-bottom: 5px;
+    }
+    
+    .stat-label {
+      color: #6c757d;
+      font-size: 0.9rem;
+      font-weight: 500;
+    }
+    
+    .actions {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-bottom: 20px;
+    }
+    
+    @media (max-width: 768px) {
+      .sidebar {
+        width: 100%;
+        height: auto;
+        position: fixed;
+        top: 0;
+        left: -100%;
+        z-index: 1000;
+        transition: left 0.3s ease;
+      }
+      
+      .sidebar.open {
+        left: 0;
+      }
+      
+      .main-content {
+        width: 100%;
+      }
+      
+      .form-grid {
+        grid-template-columns: 1fr;
+      }
+      
+      .actions {
+        flex-direction: column;
+      }
+    }
+  </style>
+</head>
+<body onload="initializeApp()">
+  <div class="app-container">
+    <nav class="sidebar">
+      <div class="sidebar-header">
+        <h1>QASO SYSTEM</h1>
+      </div>
+      <ul class="nav-menu">
+        <li class="nav-item">
+          <a class="nav-link active" onclick="showTab('dashboard')">
+            <span class="nav-icon">📊</span>
+            Dashboard
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" onclick="showTab('productos')">
+            <span class="nav-icon">📦</span>
+            Nuevo producto
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" onclick="showTab('movimientos')">
+            <span class="nav-icon">📋</span>
+            Movimientos
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" onclick="showTab('inventario')">
+            <span class="nav-icon">📊</span>
+            Inventario
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" onclick="showTab('reportes')">
+            <span class="nav-icon">📈</span>
+            Reportes
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" onclick="showTab('buscar')">
+            <span class="nav-icon">🔍</span>
+            Buscar
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" onclick="showTab('configuracion')">
+            <span class="nav-icon">⚙️</span>
+            Configuración
+          </a>
+        </li>
+      </ul>
+    </nav>
+
+    <div class="main-content">
+      <div id="dashboard" class="tab-content active">
+        <div class="content-header">
+          <h2>Dashboard General</h2>
+        </div>
+        <div class="content-body">
+          <div class="stats-grid" id="statsGrid"></div>
+          <div class="card">
+            <div class="card-header">Alertas de Stock</div>
+            <div class="card-body">
+              <div class="actions">
+                <button class="btn btn-primary" onclick="loadDashboard()">
+                  Actualizar Dashboard
+                </button>
+                <button class="btn btn-warning" onclick="showStockAlerts()">
+                  Ver Alertas de Stock
+                </button>
+              </div>
+              <div id="alertsContainer"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div id="productos" class="tab-content">
+        <div class="content-header">
+          <h2>Gestión de Productos</h2>
+        </div>
+        <div class="content-body">
+          <div class="card">
+            <div class="card-header">Registrar Nuevo Producto</div>
+            <div class="card-body">
+              <form id="formProducto" onsubmit="registrarProducto(event)">
+                <div class="form-grid">
+                  <div class="form-group">
+                    <label for="codigoProd">Código *</label>
+                    <input id="codigoProd" type="text" placeholder="Código único del producto" required>
+                  </div>
+                  <div class="form-group">
+                    <label for="nombreProd">Nombre *</label>
+                    <input id="nombreProd" type="text" placeholder="Nombre del producto" required>
+                  </div>
+                  <div class="form-group">
+                    <label for="unidadProd">Unidad de Medida</label>
+                    <select id="unidadProd" required></select>
+                  </div>
+                  <div class="form-group">
+                    <label for="grupoProd">Grupo</label>
+                    <select id="grupoProd" required></select>
+                  </div>
+                  <div class="form-group">
+                    <label for="stockMinProd">Stock Mínimo</label>
+                    <input id="stockMinProd" type="number" min="0" value="0">
+                  </div>
+                </div>
+                <div class="actions">
+                  <button type="submit" class="btn btn-success">
+                    Registrar Producto
+                  </button>
+                  <button type="button" class="btn btn-secondary" onclick="limpiarFormProducto()">
+                    Limpiar
+                  </button>
+                </div>
+              </form>
+              <div id="msgProd"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div id="movimientos" class="tab-content">
+        <div class="content-header">
+          <h2>Registro de Movimientos</h2>
+        </div>
+        <div class="content-body">
+          <div class="card">
+            <div class="card-header">Nuevo Movimiento</div>
+            <div class="card-body">
+              <form id="formMovimiento" onsubmit="registrarMovimiento(event)">
+                <div class="form-grid">
+                  <div class="form-group">
+                    <label for="codigoMov">Código del Producto *</label>
+                    <div class="autocomplete-container">
+                      <input id="codigoMov" type="text" placeholder="Código del producto" required 
+                             onkeyup="buscarProductoAutocompletado()" 
+                             onblur="ocultarAutocompletado()" 
+                             onfocus="mostrarAutocompletado()">
+                      <div id="autocompleteDropdown" class="autocomplete-dropdown"></div>
+                    </div>
+                  </div>
+                  <div class="form-group">
+                    <label for="fechaMov">Fecha *</label>
+                    <input id="fechaMov" type="date" required>
+                  </div>
+                  <div class="form-group">
+                    <label for="tipoMov">Tipo de Movimiento *</label>
+                    <select id="tipoMov" required onchange="handleTipoChange()">
+                      <option value="INGRESO">Ingreso</option>
+                      <option value="SALIDA">Salida</option>
+                      <option value="AJUSTE_POSITIVO">Ajuste Positivo</option>
+                      <option value="AJUSTE_NEGATIVO">Ajuste Negativo</option>
+                    </select>
+                  </div>
+                  <div class="form-group">
+                    <label for="cantMov">Cantidad *</label>
+                    <input id="cantMov" type="number" min="0.01" step="0.01" placeholder="Cantidad" required>
+                  </div>
+                  <div class="form-group">
+                    <label for="obsMov">Observaciones</label>
+                    <textarea id="obsMov" placeholder="Observaciones opcionales" rows="3"></textarea>
+                  </div>
+                </div>
+                <div class="actions">
+                  <button type="submit" class="btn btn-success">
+                    Guardar Movimiento
+                  </button>
+                  <button type="button" class="btn btn-secondary" onclick="limpiarFormMovimiento()">
+                    Limpiar
+                  </button>
+                </div>
+              </form>
+              <div id="msgMov"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div id="inventario" class="tab-content">
+        <div class="content-header">
+          <h2>Control de Inventario</h2>
+        </div>
+        <div class="content-body">
+          <div class="card">
+            <div class="card-header">Stock Actual</div>
+            <div class="card-body">
+              <div class="actions">
+                <button class="btn btn-primary" onclick="mostrarStock()">
+                  Actualizar Stock
+                </button>
+                <button class="btn btn-success" onclick="exportarStock()">
+                  Exportar CSV
+                </button>
+                <button class="btn btn-warning" onclick="mostrarAlertas()">
+                  Solo Alertas
+                </button>
+              </div>
+              <div id="loading" class="loading">Cargando inventario...</div>
+              <div class="table-container">
+                <div id="stockTable"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div id="reportes" class="tab-content">
+        <div class="content-header">
+          <h2>Reportes y Análisis</h2>
+        </div>
+        <div class="content-body">
+          <div class="card">
+            <div class="card-header">Historial de Movimientos</div>
+            <div class="card-body">
+              <div class="form-grid">
+                <div class="form-group">
+                  <label for="fechaDesde">Fecha Desde</label>
+                  <input id="fechaDesde" type="date" required>
+                </div>
+                <div class="form-group">
+                  <label for="fechaHasta">Fecha Hasta</label>
+                  <input id="fechaHasta" type="date" required>
+                </div>
+                <div class="form-group">
+                  <label for="filtroTipo">Filtrar por Tipo</label>
+                  <select id="filtroTipo">
+                    <option value="">Todos los movimientos</option>
+                    <option value="INGRESO">Solo Ingresos</option>
+                    <option value="SALIDA">Solo Salidas</option>
+                    <option value="AJUSTE_POSITIVO">Solo Ajustes Positivos</option>
+                    <option value="AJUSTE_NEGATIVO">Solo Ajustes Negativos</option>
+                  </select>
+                </div>
+              </div>
+              <div class="actions">
+                <button class="btn btn-primary" onclick="mostrarHistorial()">
+                  Generar Reporte
+                </button>
+                <button class="btn btn-success" onclick="exportarReporte()">
+                  Exportar Reporte
+                </button>
+              </div>
+              <div class="table-container">
+                <div id="historialTable"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div id="buscar" class="tab-content">
+        <div class="content-header">
+          <h2>Búsqueda de Productos</h2>
+        </div>
+        <div class="content-body">
+          <div class="card">
+            <div class="card-header">Buscar Productos</div>
+            <div class="card-body">
+              <div class="form-grid">
+                <div class="form-group">
+                  <label for="buscarTexto">Buscar por código, nombre o grupo</label>
+                  <input id="buscarTexto" type="text" placeholder="Escriba para buscar..." onkeyup="buscarEnTiempoReal()">
+                </div>
+              </div>
+              <div class="actions">
+                <button class="btn btn-primary" onclick="buscarProducto()">
+                  Buscar
+                </button>
+                <button class="btn btn-secondary" onclick="limpiarBusqueda()">
+                  Limpiar
+                </button>
+              </div>
+              <div class="table-container">
+                <div id="resultadosBusqueda"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div id="configuracion" class="tab-content">
+        <div class="content-header">
+          <h2>Configuración del Sistema</h2>
+        </div>
+        <div class="content-body">
+          <div class="card">
+            <div class="card-header">Herramientas de Administración</div>
+            <div class="card-body">
+              <div class="actions">
+                <button class="btn btn-info" onclick="validarIntegridad()">
+                  Validar Integridad
+                </button>
+                <button class="btn btn-success" onclick="inicializarSistema()">
+                  Inicializar Sistema
+                </button>
+                <button class="btn btn-warning" onclick="limpiarTodosFormularios()">
+                  Limpiar Todo
+                </button>
+      
